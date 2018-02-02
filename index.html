@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Pruebas</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+
+	<div>
+		<div id="app">
+			<div>
+				<input type="text" name="grupos[]" v-model="grupos" style="width:100%;">
+				<h1>Grupos: </h1>
+				<div>
+					<input type="text" v-model="caracter"> <!-- v-model="caracter" asociamos con data a vue -->
+						<a href="#" @click="addElement()">+</a> <!-- 
+							@click="addElement()" aplicamos databinding colocando un medoto llamado addElement() para aplicar
+							la accion de almacenar a la variable. 
+						-->
+				</div>
+				<br>
+				<!--
+					 utilizamos v-for para recorrer todos los registros de grupos, le anexamos la variable index
+					 con el proposito de al querer aplicar eliminar, se utilice como identificador de la fila que se
+					 esta eliminando o dato.
+					 A su vez se esta agregando un metodo llamado delElement(index) para eliminar tal registro o fila
+					 -->
+				<div class="opciones" v-for="(opt, index) in grupos">
+					<span>{{ opt }}</span> -  <a href="#" @click="delElement(index)">x</a>
+				</div>
+
+				
+			</div>
+		</div>
+	</div>
+	
+
+	<script src="js/vue.js"></script>
+	<script>
+		
+				var app = new Vue({
+					el:'#app', // agregamos el elemento que vamos a cargar las instancias de vue
+					data:{
+						grupos:['grupo 1', 'grupo 2', 'grupo 3', 'grupo 4', 'grupo 5'], //una variable llamada grupos
+						caracter:'' // variable caracter el cual hace enlace con el input text del html con el fin de usarlo como medio de almacenamiento para grupos
+					},
+					methods: {
+						// este metodo addElement() se utiliza como opcion para almacenar un registro
+						addElement(){
+							this.grupos.push(this.caracter); // se utiliza push para poder cargar en el array grupos lo que se encuentra en this.caracter
+							this.caracter = ''; // se limpia el input luego de enviar el valor
+						},
+
+						// este metodo delElement(index) es para eliminar del html el elemento del array mostrado
+						delElement(index){
+							this.grupos.splice(index,1); // se utiliza splice para eliminar elementos de la html
+							
+						}
+					}
+				})
+	</script>
+</body>
+</html>

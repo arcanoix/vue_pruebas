@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="select">
+        <span>ESTADO ID: {{ estado_id }}</span>
+            <form action="" method="post">
+                <select v-model="estado_id" @Click="getCity">
+                    <option v-for="state in states" :value="state.id">{{ state.name }}</option>
+                </select>
+                    <br>
+                    <span>CIUDAD ID {{ city_id }}</span>
+                    <br>
+                <select v-model="city_id">
+                    <option v-for="city in cities" :value="city.id">{{ city.name}}</option>
+                </select>
+            </form>
+    </div>
+    <hr>
+
+    <div id="el">
+        <h1>with Vue Select</h1>
+        <br>
+        <span>ESTADO ID: {{ estado }}</span>
+        <v-select 
+            :options="SelectState"
+            v-model="estado.id"
+            :value="estado.id"
+            placeholder="Selecciona Estado"
+            :on-change="onChangeEstado"
+            >
+            <span slot="no-option">Por Favor elegir un estado</span>
+        </v-select>
+    </div>
+
+    <script src="js/vue.js"></script>
+    <!--<script src="https://unpkg.com/vue@latest"></script>-->
+   <!-- <script src="https://unpkg.com/vue-select@latest"></script> -->
+    <script src="js/axios.min.js"></script>
+   
+    <script src="js/vue-select.js"></script>
+
+    
+    <script>
+
+
+Vue.component('v-select', VueSelect.VueSelect)
+
+var el = new Vue({
+    el:'#el',
+    data: {
+        estado:'',
+        states: []
+    },
+    mounted(){
+        this.getState();
+    },
+    computed:{
+        SelectState(){
+            return this.states.map(e => (
+                {
+                    label:e.name,
+                    value:e.id
+                }
+                    ));
+        }
+    },
+    methods: {
+        onChangeEstado(obj){
+            console.log(obj.value);
+            this.estado = obj.value;
+        },
+        
+        getState(){
+            axios.get('http://127.0.0.1:8000/state').then(res => {
+           
+            //console.log(res.data);
+           this.states = res.data;
+       })
+        }
+    }
+})
+
+
+        /*
+        otro metodo
+*/
+    
+        new Vue({
+            el:'#select',
+            data:{
+                    states: [],
+                    estado_id: '',
+                    cities:[],
+                    city_id:''
+            },
+            created(){
+                    this.getState();
+            },
+            computed:{
+                StateId(){
+
+                }
+            },
+            methods:{
+                getState(){
+                    axios.get('http://127.0.0.1:8000/state').then(res => {
+                       
+                        
+                        this.states = res.data;
+                    })
+                },
+                getCity(){
+                    
+                    axios.get('http://127.0.0.1:8000/city/'+ this.estado_id).then(res => {
+                        
+                       
+                        this.cities = res.data;
+                    })
+                }
+            }
+        });
+
+
+
+    </script>
+</body>
+</html>
