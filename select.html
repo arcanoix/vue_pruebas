@@ -27,16 +27,32 @@
     <div id="el">
         <h1>with Vue Select</h1>
         <br>
-        <span>ESTADO ID: {{ estado }}</span>
+        <span>ESTADO ID: {{ estado_id }}</span>
         <v-select 
             :options="SelectState"
-            v-model="estado.id"
-            :value="estado.id"
+            :value="estado_id.id"
             placeholder="Selecciona Estado"
             :on-change="onChangeEstado"
+            @input="resetCiudad()"
             >
             <span slot="no-option">Por Favor elegir un estado</span>
         </v-select>
+       
+        <br>
+        
+
+        <span>CIUDAD ID: {{ ciudad_id }}</span>
+        <v-select
+        :options="SelectCity"
+        :value="ciudad_id.id"
+        placeholder="selecciona ciudad"
+        :on-change="onChangeCiudad"
+        v-model="ciudad_id.id"
+        >
+        <span slot="no-option">Por Favor selecciona una ciudad</span>
+        </v-select>
+<br>
+            <a @click="save" class="btn btn-primary">Guardar</a>
     </div>
 
     <script src="js/vue.js"></script>
@@ -55,34 +71,67 @@ Vue.component('v-select', VueSelect.VueSelect)
 var el = new Vue({
     el:'#el',
     data: {
-        estado:'',
-        states: []
+        estado_id: 0,
+        ciudad_id: 0,
+        states: [],
+        cities:[],
     },
     mounted(){
         this.getState();
     },
     computed:{
         SelectState(){
-            return this.states.map(e => (
-                {
-                    label:e.name,
-                    value:e.id
-                }
-                    ));
+            return this.states.map(e => 
+            (
+                { label: e.name, value: e.id }
+            ));
+        },
+        SelectCity(){
+            return this.cities.map(c => 
+            (
+                { label: c.name, value: c.id }
+            ));
         }
     },
     methods: {
+        save(){
+            if(this.ciudad_id == ''){
+                console.log('error');
+            }else{
+                console.log('guardar');
+            }
+            
+        },
         onChangeEstado(obj){
-            console.log(obj.value);
-            this.estado = obj.value;
+           // console.log(obj.value);
+            this.estado_id = obj.value;
+            this.resetCiudad();
+            this.getCity();
+            
+        },
+        onChangeCiudad(obj){
+            //console.log(obj.value);
+            this.ciudad_id = obj.value;
         },
         
         getState(){
             axios.get('http://127.0.0.1:8000/state').then(res => {
+                this.states = res.data;
+            })
            
-            //console.log(res.data);
-           this.states = res.data;
-       })
+        },
+        getCity(){
+            axios.get('http://127.0.0.1:8000/city/'+ this.estado_id).then(res => {
+                //console.log(res.data)
+                       this.cities = res.data;
+                    })
+        },
+        resetCiudad(){
+            console.log('reseteando');
+           console.log(this.ciudad_id);
+           
+           this.ciudad_id = [];
+            
         }
     }
 })
